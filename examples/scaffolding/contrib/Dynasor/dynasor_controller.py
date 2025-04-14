@@ -2,13 +2,11 @@ from enum import Enum
 from typing import List
 
 from evaluator import equal_group
-
 from tensorrt_llm.scaffolding.controller import Controller, ScaffoldingOutput
 from tensorrt_llm.scaffolding.task import GenerationTask
 
 
 class DynasorController(Controller):
-
     class WorkerTag(Enum):
         GENERATION = "generation"
 
@@ -65,10 +63,10 @@ class DynasorController(Controller):
 
             # if generation in current round is considered to be confident enough, return it
             if (equal_group(probe_answers[-self.certainty_threshold:])
-                    and self.count_not_empty(
-                        probe_answers[-self.certainty_threshold:])
-                    == self.certainty_threshold
-                    and sum(probe_certain_count) == self.certainty_threshold):
+                and self.count_not_empty(
+                    probe_answers[-self.certainty_threshold:])
+                == self.certainty_threshold
+                and sum(probe_certain_count) == self.certainty_threshold):
                 if "</think>" in current_prompt:
                     return (
                         current_prompt +

@@ -2,7 +2,6 @@ import argparse
 import asyncio
 
 from dynasor_controller import DynasorController
-
 from tensorrt_llm.scaffolding import ScaffoldingLlm, TRTLLMWorker
 
 
@@ -35,7 +34,6 @@ def test_sync(prompts, proposer_worker):
 
 
 def test_async(prompt, proposer_worker):
-
     async def test_async_func(prompt, proposer_worker):
         prototype_controller = DynasorController()
         llm = ScaffoldingLlm(

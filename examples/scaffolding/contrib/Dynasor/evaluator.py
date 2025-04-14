@@ -4,14 +4,13 @@
 
 import multiprocessing
 import re
-from math import isclose
-from typing import Union
-
 import regex
 from latex2sympy2 import latex2sympy
+from math import isclose
 from sympy import N, simplify
 from sympy.parsing.latex import parse_latex
 from sympy.parsing.sympy_parser import parse_expr
+from typing import Union
 from word2number import w2n
 
 
@@ -280,8 +279,8 @@ def strip_string(string, skip_unit=False):
     # replace "\\text{...}" to "..."
     string = re.sub(r"\\text\{(.*?)\}", r"\1", string)
     for key in [
-            "x=", "y=", "z=", "x\\in", "y\\in", "z\\in", "x\\to", "y\\to",
-            "z\\to"
+        "x=", "y=", "z=", "x\\in", "y\\in", "z\\in", "x\\to", "y\\to",
+        "z\\to"
     ]:
         string = string.replace(key, "")
     string = string.replace("\\emptyset", r"{}")
@@ -299,9 +298,9 @@ def strip_string(string, skip_unit=False):
     # cdot
     # string = string.replace("\\cdot", "")
     if (string.startswith("{") and string.endswith("}") and string.isalnum()
-            or string.startswith("(") and string.endswith(")")
-            and string.isalnum() or string.startswith("[")
-            and string.endswith("]") and string.isalnum()):
+        or string.startswith("(") and string.endswith(")")
+        and string.isalnum() or string.startswith("[")
+        and string.endswith("]") and string.isalnum()):
         string = string[1:-1]
 
     # inf
@@ -567,7 +566,7 @@ def math_equal(
     if str(prediction.strip().lower()) == str(reference.strip().lower()):
         return True
     if (reference in ["A", "B", "C", "D", "E"]
-            and choice_answer_clean(prediction) == reference):
+        and choice_answer_clean(prediction) == reference):
         return True
 
     try:  # 1. numerical equal
@@ -607,9 +606,9 @@ def math_equal(
     ## deal with [], (), {}
     pred_str, ref_str = prediction, reference
     if (prediction.startswith("[") and prediction.endswith("]")
-            and not reference.startswith("(")) or (
-                prediction.startswith("(") and prediction.endswith(")")
-                and not reference.startswith("[")):
+        and not reference.startswith("(")) or (
+        prediction.startswith("(") and prediction.endswith(")")
+        and not reference.startswith("[")):
         pred_str = pred_str.strip("[]()")
         ref_str = ref_str.strip("[]()")
     for s in ["{", "}", "(", ")"]:
@@ -620,23 +619,23 @@ def math_equal(
 
     ## [a, b] vs. [c, d], return a==c and b==d
     if (regex.match(r"(\(|\[).+(\)|\])", prediction) is not None
-            and regex.match(r"(\(|\[).+(\)|\])", reference) is not None):
+        and regex.match(r"(\(|\[).+(\)|\])", reference) is not None):
         pred_parts = prediction[1:-1].split(",")
         ref_parts = reference[1:-1].split(",")
         if len(pred_parts) == len(ref_parts):
             if all([
-                    math_equal(pred_parts[i], ref_parts[i], include_percentage,
-                               is_close) for i in range(len(pred_parts))
+                math_equal(pred_parts[i], ref_parts[i], include_percentage,
+                           is_close) for i in range(len(pred_parts))
             ]):
                 return True
     if ((prediction.startswith("\\begin{pmatrix}")
          or prediction.startswith("\\begin{bmatrix}"))
-            and (prediction.endswith("\\end{pmatrix}")
-                 or prediction.endswith("\\end{bmatrix}"))
-            and (reference.startswith("\\begin{pmatrix}")
-                 or reference.startswith("\\begin{bmatrix}"))
-            and (reference.endswith("\\end{pmatrix}")
-                 or reference.endswith("\\end{bmatrix}"))):
+        and (prediction.endswith("\\end{pmatrix}")
+             or prediction.endswith("\\end{bmatrix}"))
+        and (reference.startswith("\\begin{pmatrix}")
+             or reference.startswith("\\begin{bmatrix}"))
+        and (reference.endswith("\\end{pmatrix}")
+             or reference.endswith("\\end{bmatrix}"))):
         pred_lines = [
             line.strip()
             for line in prediction[len("\\begin{pmatrix}"
@@ -656,12 +655,12 @@ def math_equal(
                 ref_parts = ref_line.split("&")
                 if len(pred_parts) == len(ref_parts):
                     if not all([
-                            math_equal(
-                                pred_parts[i],
-                                ref_parts[i],
-                                include_percentage,
-                                is_close,
-                            ) for i in range(len(pred_parts))
+                        math_equal(
+                            pred_parts[i],
+                            ref_parts[i],
+                            include_percentage,
+                            is_close,
+                        ) for i in range(len(pred_parts))
                     ]):
                         matched = False
                         break
@@ -685,8 +684,8 @@ def math_equal(
           and len(prediction.split("=")[0].strip()) <= 2
           and "=" not in reference):
         if math_equal(
-                prediction.split("=")[1], reference, include_percentage,
-                is_close):
+            prediction.split("=")[1], reference, include_percentage,
+            is_close):
             return True
     elif (reference.count("=") == 1
           and len(reference.split("=")[0].strip()) <= 2
@@ -744,7 +743,6 @@ def numeric_equal(prediction: float, reference: float):
 
 
 def symbolic_equal(a, b):
-
     def _parse(s):
         for f in [parse_latex, parse_expr, latex2sympy]:
             try:
@@ -807,7 +805,7 @@ def symbolic_equal_process(a, b, output_queue):
 
 def call_with_timeout(func, *args, timeout=1, **kwargs):
     output_queue = multiprocessing.Queue()
-    process_args = args + (output_queue, )
+    process_args = args + (output_queue,)
     process = multiprocessing.Process(target=func,
                                       args=process_args,
                                       kwargs=kwargs)
